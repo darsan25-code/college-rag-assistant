@@ -34,7 +34,7 @@ with st.sidebar:
     st.markdown(
         "- Upload PDFs\n"
         "- Ask questions\n"
-        "- AI answers only from documents"
+        "- Answers only from documents"
     )
 
 # ---------- File Upload (Multiple PDFs) ----------
