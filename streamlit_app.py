@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📚 College Notes & Placement PDF AI Assistant")
+st.title("📚 College Notes & Placement PDF Assistant")
 st.caption("Ask questions based only on your uploaded PDFs")
 
 # ---------- Session State ----------
