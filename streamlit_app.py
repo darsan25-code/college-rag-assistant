@@ -11,7 +11,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📚 College Notes & Placement PDF Assistant")
+st.title("📚 College Notes & Placement PDF AI Assistant")
 st.caption("Ask questions based only on your uploaded PDFs")
 
 # ---------- Session State ----------
@@ -34,7 +34,7 @@ with st.sidebar:
     st.markdown(
         "- Upload PDFs\n"
         "- Ask questions\n"
-        "- Answers only from documents"
+        "- AI Answers only from documents"
     )
 
 # ---------- File Upload (Multiple PDFs) ----------
