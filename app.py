@@ -1,25 +1,29 @@
-from utils.pdf_loader import read_pdf
-from utils.chunker import chunk_text
-from utils.vector_store import VectorStore
-from utils.llm import generate_answer
+import streamlit as st
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.llms import HuggingFaceHub
+from langchain.chains import RetrievalQA
+from langchain.llms import Ollama
 
-def main():
-    pdf_path = "data/sample.pdf"
-    text = read_pdf(pdf_path)
+st.set_page_config(page_title="College AI", layout="wide")
+st.title("🎓 College AI Assistant")
 
-    chunks = chunk_text(text)
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
-    vector_store = VectorStore()
-    vector_store.build_index(chunks)
+db = Chroma(persist_directory="db", embedding_function=embeddings)
 
-    question = input("Ask a question from your PDF: ")
+llm = Ollama(model="mistral")   # free local AI
 
-    retrieved_chunks = vector_store.search(question)
+qa = RetrievalQA.from_chain_type(
+    llm=llm,
+    retriever=db.as_retriever()
+)
 
-    answer = generate_answer(retrieved_chunks, question)
+query = st.text_input("Ask anything from your notes")
 
-    print("\n🤖 AI Answer:\n")
-    print(answer)
-
-if __name__ == "__main__":
-    main()
+if query:
+    answer = qa.run(query)
+    st.write("### 🤖 AI Answer")
+    st.write(answer)

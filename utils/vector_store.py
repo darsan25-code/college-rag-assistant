@@ -1,28 +1,32 @@
-import faiss
-from sentence_transformers import SentenceTransformer
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 
+PDF_PATH = r"C:\XboxGames\college-rag-assistant\data\UNIT III  notes.pdf"
 
-class VectorStore:
-    def __init__(self):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        self.index = None
-        self.text_chunks = []
+print("Loading PDF...")
+loader = PyPDFLoader(PDF_PATH)
+documents = loader.load()
 
-    def build_index(self, chunks):
-        self.text_chunks = chunks
+print("Splitting text...")
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=800,
+    chunk_overlap=100
+)
+chunks = splitter.split_documents(documents)
 
-        embeddings = self.model.encode(chunks)
-        dimension = embeddings.shape[1]
+print("Loading local embedding model...")
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
-        self.index = faiss.IndexFlatL2(dimension)
-        self.index.add(embeddings)
+print("Creating vector database...")
+db = Chroma.from_documents(
+    chunks,
+    embeddings,
+    persist_directory="db"
+)
 
-    def search(self, query, top_k=3):
-        query_embedding = self.model.encode([query])
-        distances, indices = self.index.search(query_embedding, top_k)
-
-        results = []
-        for idx in indices[0]:
-            results.append(self.text_chunks[idx])
-
-        return results
+db.persist()
+print("Vector database created successfully!")
