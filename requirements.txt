@@ -1,8 +1,10 @@
 streamlit
 langchain
+langchain-community
 openai
 faiss-cpu
 pandas
 numpy
 python-dotenv
 pypdf
+sentence-transformers
